@@ -1,0 +1,104 @@
+README for Chess
+
+David Xu
+
+This is my interpretation of a basic chess game. It incorporates the standard rules of chess.
+
+Game state is modeled through the Board class, and is displayed through the board itself as well
+as the bar below the board that shows whose move it is. End states for the game are shown through
+Java messages corresponding to each of the end states (white win, black win, assorted draws).
+
+The topics I chose to implement include 2D arrays, in which my game state is saved, inheritance
+in the piece abstract class and its corresponding subclasses, collections in that I stored past 
+moves so I could implement en passant and other rules as well as in storing possible moves, and
+finally complex game logic in my implementation of check, checkmate, en passant, castling, draws,
+and stalemate. I also implemented some very rudimentary JUnit testing, but this is hardly 
+comprehensive because my interface was very hard to test.
+
+Throughout the process, I had to make a few changes to my design. At the beginning, I was
+planning on using an interface for pieces. However, I noticed that pieces actually shared a lot
+of similar code, so I made it an abstract class. Additionally, I made a few changes to some of the
+ways I implemented movement especially (or storage of it). I first thought storing moves would be
+enough, but that would be hard to implement with castling, weird rules like en passant, and also
+even simple things like capturing (how would I know what piece to bring back?). So, I just made a 
+list of board states, and just went from there. Other than that, mostly the way that I thought 
+about the implementation worked out, even if it is a little convoluted.
+
+In the future, I might have implemented this differently. I would likely have moved a lot of 
+the game logic from the Board class into a separate class just to make the code more
+modular. Additionally, I likely would have increased modularity by separating the dependencies
+of my classes such as image resources and drawing. This made debugging for me quite 
+difficult and made implementing more complicated ideas much more difficult. For example, 
+I wanted to implement a basic evaluation system if possible, but this form of storing moves and
+the game state made it near impossible to do that due to its convoluted nature.
+
+The only thing I consulted outside resources for was to open hyperlinks for the rules of chess,
+the documentation for which can be found at 
+https://docs.oracle.com/javase/7/docs/api/java/awt/Desktop.html
+
+CLASS OVERVIEW
+==================================================================================================
+Game: Runs the game of chess. This is the Runnable class and thus houses the UI buttons as well 
+as the game itself.
+
+Board: This is where the vast majority of the logic takes place for the game. It also houses the
+state of the game. This class also handles all the user input for the game of chess itself 
+(such as clicking and dragging, etc.).
+
+Status: Small class that displays the game status for the board. This simply fulfills the
+requirement for something displaying game status, and is not very complicated. It should be noted
+that each instance of Status is tied to an instance of Board, and so they could likely be combined,
+but I thought that having it in a separate class would make this more modular.
+
+BoardState: this is a class that stores the important states for the board -- namely where the
+pieces are. This allows for the undo functionality as well as the draw by repetition functionality
+since the Board itself is always changing.
+
+Position: This is a class that I used throughout the program. It kind of implements the Pair
+interface, but I didn't want it to do that, so I made my own. It simply holds an X coordinate and
+a Y coordinate, which is used both for board coordinates (0 - 8 * 0 - 8) to the coordinates for
+the mouse, which is the size of the window.
+
+Piece: This is an abstract class that is a superclass of all the classes for the various pieces.
+It contains some of the shared characteristics and methods, such as having a location, a team,
+as well as methods for obtaining them. The abstract methods are headers for implementing shared
+features related to movement. It also has an implementation for whether a move causes check as well
+as a way for pieces to copy themselves so that they are well encapsulated.
+
+PieceType: This is an enum that holds the types of the pieces. This allowed me to easily
+differentiate between pieces with the getType() method implemented in Piece. This allowed me to
+deal primarily with the Piece abstract class rather than dealing with all of the individual piece
+types.
+
+Move: This is a type that simply holds a move in chess. It is how the pieces send their movements
+to the board itself. It also allows me to denote which was the last move, and is also used in the
+undo functionality. However, its primary purpose remains just to have a compact packet of data
+that would be sent back to the Board instance whenever one of its pieces made a move.
+
+Pawn: This is the pawn class, which is by far the most complicated of the pieces. It has logic
+implemented that allow it to move twice on the first move, not move twice on subsequent moves,
+it can capture in that weird ways that pawns capture, as well as being able to capture en passant,
+and also promotion has been implemented. Also, in this class, as well as in all the classes,
+movement that causes check has been disabled.
+
+Bishop: This is simply a bishop class. It just moves diagonally, so there's not too much logic
+here that is unique.
+
+King: This is a quite complicated class, as it has many features. Most notably, the king can 
+castle, which has to be implemented so that the king cannot castle through check or into check.
+Additionally, the movement of the rook is also involved, so the King is linked to its rooks.
+
+Queen: The queen is, all things considered, just a piece that can move like a bishop and like a 
+rook, so it's not too complicated here.
+
+Knight: Knight just has a weird way of moving, but other than that, it's quite simple, especially
+considering that you don't have to worry about pieces that are in the way since the Knight can just
+yeet-hop over them.
+
+Rook: The Rook was a piece that was relatively simple as it could move in straight lines. However,
+there are complicated aspects like considering whether a rook could be involved in castling.
+But, the castling mechanics are mostly in the King class, so it's pretty light here too.
+
+
+Chess Piece Icon resources were acquired at:
+https://commons.wikimedia.org/wiki/File:Chess_Pieces_Sprite.svg
