@@ -1,6 +1,6 @@
 # Java Chess
 
-*David Xu
+*David Xu*
 
 An implementation of the classic board game Chess in Java, written when I was a young laddie.
 
